@@ -26,6 +26,12 @@ RUN mkdir -m 0555 ${SPLUNK_ANSIBLE_HOME}/roles/dummy_a
 COPY roles/dummy_a ${SPLUNK_ANSIBLE_HOME}/roles/dummy_a
 COPY lab_plays.yml ${SPLUNK_ANSIBLE_HOME}
 
+# package included dummy_b app, removing source files from image
+#   (need to use multi-layer build to completely remove....)
+COPY apps/dummy_b /apps/dummy_b
+RUN (cd apps && tar czf /tmp/dummy_b.tgz dummy_b ) \
+  && rm -rf /apps/dummy_b
+
 # ${ANSIBLE_USER} is set from splunk/splunk image
 USER ${ANSIBLE_USER}
 

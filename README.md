@@ -45,13 +45,36 @@ docker run -d --rm -p 8000:8000 \
 
 - if using locally-built image, set DOCKERHUB_USER manually
 - enables HEC on 8088/tcp with SSL
+- installs local app(s) (per sed changes)
+- set SPLUNKBASE_USERNAME & SPLUNKBASE_PASSWORD to enable installation of
+  SplunkBase apps
+  - DB Connect (2686)
+  - Eventgen (1924)
+  - Lookup Editor (1724)
 - note that local permissions for default.yml must allow the ansible user
   (UID determined within the container) to read the file
 
 ```
 DOCKERHUB_USER=djschaap
+SPLUNKBASE_USERNAME=`whoami`
+SPLUNKBASE_PASSWORD=''
 docker run -it --rm splunk/splunk create-defaults > default.yml
 # edit default.yml as desired
+grep -q '  apps_location:' default.yml \
+  || sed -i '/^splunk:/ a \ \ apps_location:' default.yml
+egrep -q '\/dummy_b\.tgz' default.yml \
+  || sed -i '/^  apps_location:/ a \ \ \ \ -\ /tmp/dummy_b.tgz' default.yml
+# omit next few commands if not using SplunkBase
+grep -q '^splunkbase_password:' default.yml \
+  || sed -i "/^---/ a splunkbase_password: ${SPLUNKBASE_PASSWORD}" default.yml
+grep -q '^splunkbase_username:' default.yml \
+  || sed -i "/^---/ a splunkbase_username: ${SPLUNKBASE_USERNAME}" default.yml
+egrep -q 'app\/1724\/' default.yml \
+  || sed -i '/^  apps_location:/ a \ \ \ \ -\ https://splunkbase.splunk.com/app/1724/release/3.3.1/download' default.yml
+egrep -q 'app\/1924\/' default.yml \
+  || sed -i '/^  apps_location:/ a \ \ \ \ -\ https://splunkbase.splunk.com/app/1924/release/6.3.6/download' default.yml
+egrep -q 'app\/2686\/' default.yml \
+  || sed -i '/^  apps_location:/ a \ \ \ \ -\ https://splunkbase.splunk.com/app/2686/release/3.1.4/download' default.yml
 docker run -d --rm -p 8000:8000 -p 8088:8088 \
   -e "ANSIBLE_EXTRA_FLAGS=--extra-vars=@/tmp/defaults/default.yml" \
   -e SPLUNK_ANSIBLE_POST_TASKS=file:///opt/ansible/lab_plays.yml \
