@@ -20,6 +20,12 @@ USER root
 RUN ( test -d /tmp/defaults || mkdir -m 0755 /tmp/defaults ) \
   && chown splunk /tmp/defaults
 
+# create dummy_a Ansible role
+# ${SPLUNK_ANSIBLE_HOME} is set from splunk/splunk image
+RUN mkdir -m 0555 ${SPLUNK_ANSIBLE_HOME}/roles/dummy_a
+COPY roles/dummy_a ${SPLUNK_ANSIBLE_HOME}/roles/dummy_a
+COPY lab_plays.yml ${SPLUNK_ANSIBLE_HOME}
+
 # ${ANSIBLE_USER} is set from splunk/splunk image
 USER ${ANSIBLE_USER}
 

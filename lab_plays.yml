@@ -1,0 +1,5 @@
+%YAML 1.1
+---
+- name: include dummy_a role
+  include_role:
+    name: dummy_a

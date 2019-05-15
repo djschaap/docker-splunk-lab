@@ -35,6 +35,7 @@ make test		build, then start container and run tests
 DOCKERHUB_USER=djschaap
 SPLUNK_PASSWORD=ChangeMe
 docker run -d --rm -p 8000:8000 \
+  -e SPLUNK_ANSIBLE_POST_TASKS=file:///opt/ansible/lab_plays.yml \
   -e SPLUNK_PASSWORD \
   -e SPLUNK_START_ARGS=--accept-license \
   --name splunk ${DOCKERHUB_USER}/docker-splunk-lab:latest
@@ -53,6 +54,7 @@ docker run -it --rm splunk/splunk create-defaults > default.yml
 # edit default.yml as desired
 docker run -d --rm -p 8000:8000 -p 8088:8088 \
   -e "ANSIBLE_EXTRA_FLAGS=--extra-vars=@/tmp/defaults/default.yml" \
+  -e SPLUNK_ANSIBLE_POST_TASKS=file:///opt/ansible/lab_plays.yml \
   -e SPLUNK_START_ARGS=--accept-license \
   --mount type=bind,src=`pwd`/default.yml,dst=/tmp/defaults/default.yml \
   --name splunk ${DOCKERHUB_USER}/docker-splunk-lab:latest

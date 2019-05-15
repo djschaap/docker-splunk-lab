@@ -1,0 +1,16 @@
+%YAML 1.1
+---
+- name: Create /tmp/dummy_a_1
+  file:
+    path: "/tmp/dummy_a_1"
+    mode: 0644
+    owner: splunk
+    state: touch
+- name: Create /tmp/dummy_a_2
+  copy:
+    dest: "/tmp/dummy_a_2"
+    mode: 0644
+    owner: splunk
+    content: |
+      line 1
+      line 2
