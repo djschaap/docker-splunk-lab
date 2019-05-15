@@ -1,0 +1,9 @@
+*.DS_Store
+*.bak
+*.sw?
+*~
+.gitignore
+.make-release-support
+LICENSE
+Makefile
+README*
