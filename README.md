@@ -53,6 +53,7 @@ docker run -d --rm -p 8000:8000 \
   - Lookup Editor (1724)
 - note that local permissions for default.yml must allow the ansible user
   (UID determined within the container) to read the file
+- OpenJDK 8 is available under /usr/lib/jvm/java-8-openjdk-amd64/jre
 
 ```
 DOCKERHUB_USER=djschaap

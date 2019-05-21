@@ -15,6 +15,14 @@
 FROM splunk/splunk:latest
 USER root
 
+# Install Java in case we want DB Connect
+#   mkdir /usr/share/man/man1 is necessary due to
+#   https://github.com/debuerreotype/docker-debian-artifacts/issues/24
+RUN apt-get update \
+  && mkdir -p /usr/share/man/man1 > /dev/null \
+  && apt-get install -y libjtds-java libmysql-java openjdk-8-jre-headless \
+  && apt-get clean
+
 # Docker creates /tmp/defaults if bind-mounting /tmp/defaults/default.yml.
 # Ansible requires that directory be writable by the "splunk" user.
 RUN ( test -d /tmp/defaults || mkdir -m 0755 /tmp/defaults ) \
